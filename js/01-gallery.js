@@ -26,28 +26,28 @@ const galleryMarkup = galleryItems.map((image) => {
 
 picturesContainer.append(...galleryMarkup);
 
-galleryMarkup.map((div) => {
+picturesContainer.addEventListener("click", (event) => {
+  event.preventDefault();
+
+  const source = event.target.dataset.source;
+  const description = event.target.alt;
+
   const instance = basicLightbox.create(
-    `
-      <img src="${div.querySelector("img").dataset.source}" alt="${
-      div.querySelector("img").alt
-    }">
-    `,
+    `<img src="${source}" alt="${description}">`,
     {
       onShow: (instance) => {
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") {
-            instance.close();
-          }
-        });
+        document.addEventListener("keydown", onKeyPress);
+      },
+      onClose: (instance) => {
+        document.removeEventListener("keydown", onKeyPress);
       },
     }
   );
+  instance.show();
 
-  div.addEventListener("click", (event) => {
-    event.preventDefault();
-    instance.show();
-  });
-
-  return instance;
+  function onKeyPress(event) {
+    if (event.key === "Escape") {
+      instance.close();
+    }
+  }
 });
